@@ -3,8 +3,6 @@ import pickle
 import random
 from os import listdir
 
-# import ddddocr
-
 import time
 import re
 import requests
@@ -27,7 +25,7 @@ class Login:
         self.questionid = questionid
         self.answer = answer
         self.cookies_flag = cookies_flag
-        # self.ocr = ddddocr.DdddOcr()
+
 
     def form_hash(self):
         rst = self.session.get(f'https://{self.hostname}/member.php?mod=logging&action=login').text
@@ -36,43 +34,6 @@ class Login:
         logger.info(f'loginhash : {loginhash} , formhash : {formhash} ')
         return loginhash, formhash
 
-    def verify_code_once(self):
-        rst = self.session.get(
-            f'https://{self.hostname}/misc.php?mod=seccode&action=update&idhash=cSA&0.3701502461393815&modid=member::logging').text
-        update = re.search(r'update=(.+?)&idhash=', rst).group(1)
-
-        code_headers = {
-            'Accept': 'image/webp,image/apng,image/*,*/*;q=0.8',
-            'Accept-Encoding': 'gzip, deflate, br',
-            'Accept-Language': 'zh-CN,zh;q=0.9',
-            'Connection': 'keep-alive',
-            'hostname': f'{self.hostname}',
-            'Referer': f'https://{self.hostname}/member.php?mod=logging&action=login',
-            'Sec-Fetch-Mode': 'no-cors',
-            'Sec-Fetch-Site': 'same-origin',
-            'User-Agent': USER_AGENT
-        }
-        rst = self.session.get(f'https://{self.hostname}/misc.php?mod=seccode&update={update}&idhash=cSA',
-                               headers=code_headers)
-
-        # return  self.ocr.classification(rst.content)
-        return "1234"
-
-    def verify_code(self, num=10):
-        while num > 0:
-            num -= 1
-            code = self.verify_code_once()
-            verify_url = f'https://{self.hostname}/misc.php?mod=seccode&action=check&inajax=1&modid=member::logging&idhash=cSA&secverify={code}'
-            res = self.session.get(verify_url).text
-
-            if 'succeed' in res:
-                logger.info('验证码识别成功，验证码:' + code)
-                return code
-            else:
-                logger.info('验证码识别失败，重新识别中...')
-
-        logger.error('验证码获取失败，请增加验证次数或检查当前验证码识别功能是否正常')
-        return ''
 
     def account_login_without_verify(self):
 
@@ -99,33 +60,8 @@ class Login:
                 return True
         except Exception:
             logger.error('存在验证码，登陆失败，准备获取验证码中', exc_info=True)
-
-        code = self.verify_code()
-        if code == '':
             return False
 
-        loginhash, formhash = self.form_hash()
-        login_url = f'https://{self.hostname}/member.php?mod=logging&action=login&loginsubmit=yes&loginhash={loginhash}&inajax=1'
-        formData = {
-            'formhash': formhash,
-            'referer': f'https://{self.hostname}/',
-            'loginfield': self.username,
-            'username': self.username,
-            'password': self.password,
-            'questionid': self.questionid,
-            'answer': self.answer,
-            'cookietime': 2592000,
-            'seccodehash': 'cSA',
-            'seccodemodid': 'member::logging',
-            'seccodeverify': code,  # verify code
-        }
-        login_rst = self.session.post(login_url, data=formData).text
-        if 'succeed' in login_rst:
-            logger.info('登陆成功')
-            return True
-        else:
-            logger.info('登陆失败，请检查账号或密码是否正确')
-            return False
 
     def cookies_login(self):
         cookies_name = '.cookies-' + self.username
