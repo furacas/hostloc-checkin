@@ -12,7 +12,7 @@ import sys
 from loguru import logger
 
 
-USER_AGENT = os.getenv("USER_AGENT","Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36")
+USER_AGENT = os.getenv("HOST_LOC_USER_AGENT","Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36")
 
 
 class Login:
@@ -219,8 +219,8 @@ class Hostloc:
 
 
 if __name__ == '__main__':
-    username = os.getenv('USER_NAME')
-    password = os.getenv('PASSWORD')
+    username = os.getenv('HOST_LOC_USER_NAME')
+    password = os.getenv('HOST_LOC_PASSWORD')
     hostloc = Hostloc(username, password)
     hostloc.login()
     hostloc.signin()
