@@ -3,7 +3,7 @@ import pickle
 import random
 from os import listdir
 
-import ddddocr
+# import ddddocr
 
 import time
 import re
@@ -27,7 +27,7 @@ class Login:
         self.questionid = questionid
         self.answer = answer
         self.cookies_flag = cookies_flag
-        self.ocr = ddddocr.DdddOcr()
+        # self.ocr = ddddocr.DdddOcr()
 
     def form_hash(self):
         rst = self.session.get(f'https://{self.hostname}/member.php?mod=logging&action=login').text
@@ -55,7 +55,8 @@ class Login:
         rst = self.session.get(f'https://{self.hostname}/misc.php?mod=seccode&update={update}&idhash=cSA',
                                headers=code_headers)
 
-        return self.ocr.classification(rst.content)
+        # return  self.ocr.classification(rst.content)
+        return "1234"
 
     def verify_code(self, num=10):
         while num > 0:
