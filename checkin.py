@@ -150,14 +150,15 @@ class Hostloc:
 
         random_numbers = self.generate_random_numbers(start, end, count)
         for number in random_numbers:
-            time.sleep(5)
-            signin_url = f'https://{self.hostname}/space-uid-{number}.html'
-            self.session.get(signin_url)
+            sleep_time = random.randint(5, 10)
+            time.sleep(sleep_time)
+            visit_url = f'https://{self.hostname}/space-uid-{number}.html'
+            self.session.get(visit_url)
 
 
 if __name__ == '__main__':
-    username = os.getenv('HOST_LOC_USER_NAME')
-    password = os.getenv('HOST_LOC_PASSWORD')
+    username = os.getenv('HOSTLOC_USERNAME')
+    password = os.getenv('HOSTLOC_PASSWORD')
     hostloc = Hostloc(username, password)
     hostloc.login()
     hostloc.signin()
